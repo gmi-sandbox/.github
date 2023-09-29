@@ -1,0 +1,18 @@
+name: Validate catalog-info.yaml
+on:
+  pull_request:
+    paths:
+      - 'catalog-info.yaml'
+  push:
+    paths:
+      - 'catalog-info.yaml'
+
+jobs:
+  validate_catalog:
+    runs-on: gcp
+    steps:
+      - id: 'Checkout'
+        uses: actions/checkout@v3
+
+      - id: 'Validate'
+        uses: RoadieHQ/backstage-entity-validator@v0.3.1

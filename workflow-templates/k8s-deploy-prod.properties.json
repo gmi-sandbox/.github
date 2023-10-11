@@ -1,0 +1,9 @@
+{
+    "name": "k8s-deploy-prod",
+    "description": "Creates a prod deployment workflow that fires when merged to the defualt branch.",
+    "iconName": "k8s-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": []
+}

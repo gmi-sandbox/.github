@@ -1,4 +1,4 @@
-description: Deploys a branch to an environment named <app>-<branch> that is dynamically created when a PR is opened or updated for that branch.
+# description: Deploys a branch to an environment named <app>-<branch> that is dynamically created when a PR is opened or updated for that branch.
 name: Deploy Nonprod
 on:
   pull_request:

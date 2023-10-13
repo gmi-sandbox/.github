@@ -1,0 +1,9 @@
+{
+    "name": "iis-deploy-qa",
+    "description": "Creates a QA IIS deployment workflow that fires when a pull request is opened or updated.",
+    "iconName": "iis-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": []
+}

@@ -1,4 +1,4 @@
-# description: Deploys to Prod when the default branch set on the repository (usually main or master) has code pushed to it(usually after a PR has been merged).
+# description: Deploys to Prod when the default branch set on the repository (usually main or master) has code pushed to it (usually after a PR has been merged).
 name: Deploy Production
 on:
   push:

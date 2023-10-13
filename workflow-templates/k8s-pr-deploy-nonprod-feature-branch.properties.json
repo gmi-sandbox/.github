@@ -1,6 +1,6 @@
 {
     "name": "k8s-pr-deploy-nonprod-feature-branch",
-    "description": "Creates a dev deployment workflow that fires when a pull request is opened.",
+    "description": "Creates a dev Kubernetes deployment workflow that fires when a pull request is opened.",
     "iconName": "k8s-icon",
     "categories": [
         "deployment"

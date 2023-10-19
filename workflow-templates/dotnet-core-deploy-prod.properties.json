@@ -1,0 +1,9 @@
+{
+    "name": "dotnet-core-deploy-prod",
+    "description": "Creates a Production .Net Core IIS deployment workflow that fires when merged to the default branch.",
+    "iconName": "dotnet-core-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": []
+}

@@ -1,0 +1,9 @@
+{
+    "name": "dotnet-core-deploy-qa",
+    "description": "Creates a QA .Net Core IIS deployment workflow that fires when a pull request is opened or updated.",
+    "iconName": "dotnet-core-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": []
+}

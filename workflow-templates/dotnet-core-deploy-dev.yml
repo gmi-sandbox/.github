@@ -1,0 +1,101 @@
+# description: Deploys to Development when a push occurs to any branch that is not the default branch
+name: Deploy Development
+on:
+  push:
+    branches-ignore:  
+      - $default-branch
+
+env:
+  SOLUTION_PATH: ExampleDotNetCoreSolution.sln
+  PACKAGE_NAME: example.generalmills.com
+
+jobs:
+  # Prevents a dev deployment when a push to a Dependabot branch occurs - Can delete setup-env job if your repo doesn't use Dependabot
+  setup-env:
+    runs-on: gcp
+    outputs:
+      source_branch: ${{ steps.set_env.outputs.source_branch }}
+    steps:
+      - name: Set Source Branch Variable
+        id: set_env
+        run: |
+          echo "source_branch=${{ github.head_ref || github.ref_name }}" >> $GITHUB_OUTPUT
+
+  # This is a very basic build workflow for a .NET Core Application - Please adjust as needed to build your application
+  msBuild:
+    # Prevents a dev deployment when a push to a Dependabot branch occurs - Can delete the needs: and if: lines if your repo doesn't use Dependabot
+    needs: setup-env
+    if: (!(startsWith(needs.setup-env.outputs.source_branch, 'dependabot')))
+    runs-on: Windows
+    steps:
+      - uses: actions/checkout@v3
+      
+      # view documentation for the setup-msbuild action here: https://github.com/microsoft/setup-msbuild
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v1
+      
+      # view documentation for the setup-nuget action here: https://github.com/NuGet/setup-nuget
+      - name: Setup NuGet.exe
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-version: '5.x'
+      - name: Restore NuGet Packages
+        run: nuget restore ${{ env.SOLUTION_PATH }} -source https://nuget.generalmills.com
+      
+      # run msbuild command
+      - name: msBuild .sln
+        run: msbuild ${{ env.SOLUTION_PATH }} -p:RunCodeAnalysis=false -p:Configuration=Release -p:DefineConstants=CODE_ANALYSIS -fileLogger
+      
+      # Create build artifacts using the filterBuildOutput action
+      - name: Copy files to .build folder
+        uses: gmi-actions/filterBuildOutput@v0.1
+        with:
+          sourceFolderName: ExampleDotNetCoreSolution.Web
+          destinationFolderName: /.build/${{env.PACKAGE_NAME}}
+          exclusions: "**/*.pdb, **/*.Tests.dll"
+      
+      # Create the artifacts folder
+      - run: mkdir .build/artifacts/${{env.PACKAGE_NAME}}
+      
+      # Create Zip of artifacts using the createArtifact action
+      - name: Zip files
+        uses: gmi-actions/createArtifact@v1.1
+        with:
+          packageName: ${{env.PACKAGE_NAME}}
+          sourceFolderName: /.build/${{env.PACKAGE_NAME}}
+      
+      # Upload artifacts to Artifactory
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v3
+        env:
+          JF_ENV_1: ${{ secrets.ARTIFACTORY_PROD }}
+      # Push artifacts to snapshot on every build
+      - name: Push Artifact
+        uses: gmi-actions/push-artifact@v1
+        with:
+          source_path: ./.build/artifacts/${{env.PACKAGE_NAME}}/${{env.PACKAGE_NAME}}*.zip
+          repository_name: web-packages-snapshot-local
+          package_name: ${{env.PACKAGE_NAME}}
+      # Promote artifacts to release when branch is main (or master/your default branch)
+      - name: Promote Artifact
+        if: github.ref == 'refs/heads/main' # CHANGE ME TO YOUR DEFAULT BRANCH!!!
+        uses: gmi-actions/promote-artifact@v1
+        with:
+          target_repository: web-packages-release-local
+          repository_name: web-packages-snapshot-local
+          package_name: ${{env.PACKAGE_NAME}}
+
+  msDeploy:
+    needs: msBuild
+    uses: gmi-actions/msdeploy/.github/workflows/msdeploy-workflow.yml@v1
+    with:
+      platform: ExamplePlatform                       # CHANGE ME TO YOUR DESIRED DEPLOYMENT PLATFORM!!!
+      environment: Development
+      deployment_name: ${{env.PACKAGE_NAME}}          # CHANGE ME TO THE NAME OF THE SITE OR SERVICE BEING DEPLOYED!!!
+      source: ${{env.PACKAGE_NAME}}.zip               # CHANGE ME TO THE LOCATION OF THE ARTIFACT BEING DEPLOYED!!!
+      destination: wwwroot$\${{env.PACKAGE_NAME}}     # CHANGE ME TO THE LOCATION OF THE SITE OR SERVICE BEING DEPLOYED!!!
+      repository_name: web-packages-snapshot-local    # Typically will use web-packages-snapshot-local for Development
+      # stop_and_start_app_pool: true                 # UNCOMMENT IF THE APP POOL SHOULD BE STOPPED BEFORE DEPLOYMENT AND STARTED AFTER DEPLOYMENT
+      # stop_and_start_service: true                  # UNCOMMENT IF THE SERICE SHOULD BE STOPPED BEFORE DEPLOYMENT AND STARTED AFTER DEPLOYMENT
+      # additional_arguments: -enableRule:doNotDelete # UNCOMMENT IF YOU NEED TO PASS ADDITONAL ARGUMENTS TO THE MSDeploy COMMAND
+    secrets: inherit

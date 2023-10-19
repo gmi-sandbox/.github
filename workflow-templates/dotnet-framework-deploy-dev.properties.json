@@ -1,0 +1,9 @@
+{
+    "name": "dotnet-framework-deploy-dev",
+    "description": "Creates a Development .Net Framework IIS deployment workflow that fires when a push to any branch (except the default_branch) occurs.",
+    "iconName": "dotnet-framework-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": []
+}

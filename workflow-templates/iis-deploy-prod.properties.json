@@ -1,9 +1,0 @@
-{
-    "name": "iis-deploy-prod",
-    "description": "Creates a prod IIS deployment workflow that fires when merged to the default branch.",
-    "iconName": "iis-icon",
-    "categories": [
-        "deployment"
-    ],
-    "filePatterns": []
-}

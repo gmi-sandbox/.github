@@ -1,9 +1,0 @@
-{
-    "name": "iis-deploy-dev",
-    "description": "Creates a Development IIS deployment workflow that fires when a push to any branch (except the default_branch) occurs.",
-    "iconName": "iis-icon",
-    "categories": [
-        "deployment"
-    ],
-    "filePatterns": []
-}

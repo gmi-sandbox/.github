@@ -1,0 +1,9 @@
+{
+    "name": "k8s-deploy-and-sync",
+    "description": "Creates a Kubernetes deployment workflow that runs when dispatched via the UI.",
+    "iconName": "k8s-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": []
+}

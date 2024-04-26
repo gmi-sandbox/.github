@@ -1,0 +1,64 @@
+# description: Takes Environment, Image tag, and repo inputs and deploys the respective image to the environment.
+name: Deploy and Sync
+on: 
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment you want to deploy to'
+        required: true
+        type: environment
+      containerTag:
+        description: 'The Container Image Tag that you want to deploy'
+        type: string
+        required: true
+      containerRepository:
+        description: 'The Container Repository that you are deploying from'
+        type: string
+        required: true
+jobs:
+  # Automatically generates a string from the repository name that is kebab cased
+  repo-name:
+    runs-on: gcp
+    outputs:
+      safeRepoName: ${{steps.kebabcase.outputs.kebabRepository}}
+    steps:
+      - id: kebabcase
+        uses: gmi-actions/kebabcase@v1
+  # Deploys your application to k8s-applications repository
+  deploy:
+    environment: ${{inputs.environment}}
+    needs:
+      - repo-name
+    runs-on: gcp
+    outputs:
+      clusterMatrix: ${{steps.deploy.outputs.clusterMatrix}}
+    steps:
+    - id: kebabcase
+      uses: gmi-actions/kebabcase@v1
+      with:
+        kebabString: ${{ github.head_ref || github.ref_name }}
+    - uses: actions/checkout@v4
+    - name: deploy
+      id: deploy
+      uses: gmi-actions/deployK8sApplication@v1
+      with:
+        kubeconfig: ${{secrets.K8S_DEPLOY_KUBECONFIG}}
+        app_env: ${{inputs.environment}} # Kube Namespace ENV Optional, More than likely this will match your Deploy Environment.
+        cluster_env: nonprod
+        # These are your HELM values file overrides. The below contains defaults most projects will use.
+        values: |
+          image:
+            repository: ${{inputs.containerRepository}}
+            tag: ${{inputs.containerTag}}
+          istio:
+            # This host matches the default k8s-deploy-pr-nonprod host, and should be changed as needed.
+            hosts:
+              - ${{ needs.repo-name.outputs.safeRepoName }}-${{inputs.environment}}.k8s.genmills.com
+  # Deploys your application to the cluster(S) by asking argocd in the cluster to syncronize with your git repository
+  sync:
+    uses: gmi-actions/deployK8sApplication/.github/workflows/sync.yml@v1
+    needs: deploy
+    with:
+      matrix: ${{ needs.deploy.outputs.clusterMatrix }}
+      environment: ${{inputs.environment}}
+    secrets: inherit

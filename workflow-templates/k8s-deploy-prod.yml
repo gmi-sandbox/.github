@@ -20,7 +20,7 @@ jobs:
     uses: gmi-actions/build-container/.github/workflows/build-container.yml@v1
     with:
       container_name: ${{ needs.repo-name.outputs.safeRepoName }} # Defaults container name to your repository name
-      artifactory_promotion_branch: format('refs/heads/{0}', fromJSON('$default-branch')) # Set Promotion Branch to this repositories default branch see: https://github.com/actions/starter-workflows/issues/2100
+      artifactory_promotion_branch: ${{format('refs/heads/{0}', fromJSON('$default-branch'))}} # Set Promotion Branch to this repositories default branch see: https://github.com/actions/starter-workflows/issues/2100
     secrets: inherit
   
   # Deploys your application to k8s-applications repository

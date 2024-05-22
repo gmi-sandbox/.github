@@ -1,5 +1,5 @@
 # description: Deploys an application to a named github environment. when a PR is opened or updated for a branch.
-name: Deploy Feature Branch
+name: Deploy Nonprod
 on:
   pull_request:
 

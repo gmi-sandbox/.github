@@ -28,21 +28,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      # view documentation for the setup-msbuild action here: https://github.com/microsoft/setup-msbuild
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v1
-      
-      # view documentation for the setup-nuget action here: https://github.com/NuGet/setup-nuget
-      - name: Setup NuGet.exe
-        uses: nuget/setup-nuget@v1
+      # View documentation for the setup-dotnet action here: https://github.com/actions/setup-dotnet
+      - name: Setup dotnet.exe
+        uses: actions/setup-dotnet@v3
         with:
-          nuget-version: '5.x'
-      - name: Restore NuGet Packages
-        run: nuget restore ${{ env.SOLUTION_PATH }} -source https://nuget.generalmills.com
+          dotnet-version: 6.0.x
+      - name: Restore NuGet dependencies
+        run: dotnet restore ${{ env.SOLUTION_PATH }} --source https://nuget.generalmills.com/nuget --source https://api.nuget.org/v3/index.json
       
-      # run msbuild command
-      - name: msBuild .sln
-        run: msbuild ${{ env.SOLUTION_PATH }} -p:RunCodeAnalysis=false -p:Configuration=Release -p:DefineConstants=CODE_ANALYSIS -fileLogger
+      # Run dotnet build command
+      - name: dotnet build .sln
+        run: dotnet build ${{ env.SOLUTION_PATH }} -p:RunCodeAnalysis=false -p:Configuration=Release -p:DefineConstants=CODE_ANALYSIS -fileLogger
       
       # Create build artifacts using the filterBuildOutput action
       - name: Copy files to .build folder

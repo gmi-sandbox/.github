@@ -6,7 +6,7 @@
         "deployment"
     ],
     "filePatterns": [
-        ".github/workflow-templates/build-and-deploy-nonprod.yml",
-        ".github/workflow-templates/deploy-prod.yml"
+        "workflow-templates/deploy-feature-branch-build/build-and-deploy-nonprod.yml",
+        "workflow-templates/deploy-feature-branch-build/deploy-prod.yml"
     ]
 }

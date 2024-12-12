@@ -1,4 +1,4 @@
-name: 'deploy-from-feature-branch-to-k8s-nonprod'
+name: 'deploy-docker-image-from-feature-branch-to-nonprod'
 on:
   pull_request:
 

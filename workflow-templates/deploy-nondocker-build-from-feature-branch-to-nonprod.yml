@@ -1,0 +1,35 @@
+name: 'deploy-nondocker-build-from-feature-branch-to-nonprod'
+on:
+  pull_request:
+
+jobs:
+  get_github_context:
+    permissions: read-all
+    uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@feat/implement-reusable-workflow
+
+  build_and_push_artifacts:
+    needs: get_github_context
+    runs-on: gcp
+    steps:
+      - uses: actions/checkout@v4
+
+      ### Add your build steps here
+      ### Leveage other templates provided in this repository to preform the build steps
+
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        env:
+          JF_ENV_1: ${{ secrets.ARTIFACTORY_PROD }}
+
+      # Push the artifact to artifactory, this is a placeholder and should be replaced with the actual build steps
+      - name: Push Artifact
+        uses: gmi-actions/push-artifact@feat/POC-Individualize-promote-artifact
+        with:
+          source_path: # Add the path to the artifact you want to push
+          repository_name: # Add the name of the repository you want to push to
+          repository_path: # Add the path to the repository you want to push to
+          package_name: # Add the name of the package you want to push
+          build_number: ${{ needs.get_github_context.outputs.build_number }}
+
+  ### Deploy to the target platform
+  ### Leveage other templates provided in this repository to perform deployment steps

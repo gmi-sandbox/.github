@@ -1,0 +1,46 @@
+name: 'deploy-nondocker-build-from-feature-branch-to-prod'
+on:
+  pull_request:
+    types:
+      - closed
+    
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: 'The build number to deploy as display in JFrog Artifactory'
+        required: false
+
+jobs:
+
+  # Only run if the PR was merged to the default branch or triggered manually
+  if_merged:
+    if: (github.event.pull_request.merged == true && github.ref_name == $default-branch) || github.event_name == 'workflow_dispatch'
+    runs-on: gcp
+    steps:
+    - run: |
+        echo The PR was merged
+
+  get_github_context:
+    permissions: read-all
+    uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@feat/implement-reusable-workflow
+
+  promote_build:
+    runs-on: gcp
+    needs: [get_github_context]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup JFrog CLI for promotion (only for Production)
+      uses: jfrog/setup-jfrog-cli@v4
+      env:
+        JF_ENV_1: ${{ secrets.ARTIFACTORY_PROD }}
+
+    - uses: gmi-actions/promote-artifact@v1
+      with:
+          package_name: # Add the name of the package you want to push
+          repository_name: # Add the name of the repository you want to push to
+          target_repository: # Add the path to the repository you want to push to
+          repository_path: # Add the path to the repository you want to push to
+          build_number: ${{ inputs.build_number != '' && inputs.build_number || needs.set_env.outputs.build_number }}
+
+  ### Deploy to the target platform
+  ### Leveage other templates provided in this repository to perform deployment steps

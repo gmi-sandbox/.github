@@ -1,0 +1,58 @@
+name: 'deploy-docker-image-from-feature-branch-to-nonprod'
+on:
+  pull_request:
+
+## Build a docker image with a unique build in the form of <triggering branch name><commit sha>, and deploy to nonprod k8s
+jobs:
+    set_env:
+      permissions: read-all
+      uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@v1
+
+    build_container: 
+      needs: set_env
+      uses: gmi-actions/build-container/.github/workflows/build-container.yml@v1
+      with:
+        container_name: ${{ needs.set_env.outputs.safeRepoName }}
+        artifactory_promotion: false
+        build_number: ${{ needs.set_env.outputs.build_number }}
+        container_tag: ${{ needs.set_env.outputs.container_tag }}
+      secrets: inherit
+      
+    # Deploys your application to k8s-applications repository
+    deploy:
+      if: github.ref_name != $default-branch 
+      environment: dev # CHANGE ME TO YOUR DESIRED ENVIRONMENT NAME!!!
+      needs:
+        - build_container
+        - set_env
+      runs-on: gcp
+      outputs:
+        clusterMatrix: ${{steps.deploy.outputs.clusterMatrix}}
+      steps:
+        - uses: actions/checkout@v4
+        - name: deploy
+          id: deploy
+          uses: gmi-actions/deployK8sApplication@v1
+          with:
+            kubeconfig: ${{secrets.K8S_DEPLOY_KUBECONFIG}}
+            app_env: dev # Kube Namespace ENV Optional, More than likely this will match your Deploy Environment.
+            cluster_env: dev
+            # These are your HELM values file overrides. The below contains defaults most projects will use.
+            values: | 
+              image: 
+                repository: ${{needs.build_container.outputs.container_registry}}/${{needs.build_container.outputs.container_name}}
+                tag: ${{needs.build_container.outputs.container_tag}}
+              istio:
+                # Don't forget to setup your environment with Variables. This example uses a github Environment specific Variable.
+                hosts:
+                  - ${{ needs.set_env.outputs.safeRepoName }}-dev.k8s.genmills.com
+
+    # Deploys your application to the cluster(S) by asking argocd in the cluster to syncronize with your git repository
+    sync:
+      if: github.ref_name != $default-branch 
+      uses: gmi-actions/deployK8sApplication/.github/workflows/sync.yml@v1
+      needs: deploy
+      with:
+        matrix: ${{ needs.deploy.outputs.clusterMatrix }}
+        environment: dev # CHANGE ME TO YOUR DESIRED ENVIRONMENT NAME!!!
+      secrets: inherit

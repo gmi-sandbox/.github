@@ -1,9 +1,0 @@
-name: 'build-and-deploy-nonprod'
-on:
-  pull_request:
-
-## Build a docker image and promote it in a seperate workflow
-jobs:
-    set_env:
-        permissions: read-all
-        uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@v1

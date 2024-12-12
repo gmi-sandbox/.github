@@ -1,9 +1,0 @@
-{
-    "name": "deploy-prod",
-    "description": "Two workflows to be used together to 1. build and deploy a project to nonprod, 2. promote the same build to production",
-    "iconName": "k8s-icon",
-    "categories": [
-        "deployment"
-    ],
-    "filePatterns": ["build-and-deploy-nonprod.yml", "deploy-prod.yml" ]
-}

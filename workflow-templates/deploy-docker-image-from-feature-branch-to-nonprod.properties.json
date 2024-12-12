@@ -1,0 +1,9 @@
+{
+    "name": "deploy-docker-image-from-feature-branch-to-nonprod",
+    "description": "Uniquely generate a build number associated with a feature branch and deploy to nonprod. Must be used prior to calling 'deploy-docker-image-from-feature-branch-to-prod'.",
+    "iconName": "k8s-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": [ ]
+}

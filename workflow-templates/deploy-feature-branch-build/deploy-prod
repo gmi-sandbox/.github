@@ -1,0 +1,19 @@
+name: 'deploy-prod
+'
+on:
+    pull_request:
+      types:
+      - closed
+
+jobs:
+    if_merged:
+        if: github.event.pull_request.merged == true && ( github.ref_name == 'master' || github.ref_name == 'main' )
+        runs-on: gcp
+        steps:
+        - run: |
+            echo The PR was merged
+
+    set_env:
+        needs: if_merged
+        permissions: read-all
+        uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@v1

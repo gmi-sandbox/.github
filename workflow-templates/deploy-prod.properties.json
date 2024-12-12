@@ -5,5 +5,5 @@
     "categories": [
         "deployment"
     ],
-    "filePatterns": ["deploy-prod.yml", "build-and-deploy-nonprod.yml"]
+    "filePatterns": ["build-and-deploy-nonprod.yml", "deploy-prod.yml" ]
 }

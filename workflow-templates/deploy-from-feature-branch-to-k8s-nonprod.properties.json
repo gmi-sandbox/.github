@@ -1,0 +1,9 @@
+{
+    "name": "deploy-from-feature-branch-to-k8s-nonprod",
+    "description": "Uniquely generate a build number associated with a feature branch and deploy to nonprod. Must be used prior to calling 'deploy-from-feature-branch-to-k8s-prod'.",
+    "iconName": "k8s-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": [ ]
+}

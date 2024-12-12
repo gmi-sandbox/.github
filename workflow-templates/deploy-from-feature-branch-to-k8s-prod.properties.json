@@ -1,0 +1,9 @@
+{
+    "name": "deploy-from-feature-branch-to-k8s-prod",
+    "description": "Get the latest build associated with a feature branch and deploy to prod. Must be used in conjunction with the 'deploy-from-feature-branch-to-k8s-nonprod' workflow if not using workflow_dispatch.",
+    "iconName": "k8s-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": [ ]
+}

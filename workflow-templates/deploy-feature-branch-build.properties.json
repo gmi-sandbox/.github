@@ -1,0 +1,12 @@
+{
+    "name": "deploy-feature-branch-build",
+    "description": "Two workflows to be used together to 1. build and deploy a project to nonprod, 2. promote the same build to production",
+    "iconName": "k8s-icon",
+    "categories": [
+        "deployment"
+    ],
+    "filePatterns": [
+        "./workflow-templates/build-and-deploy-nonprod.yml",
+        "./workflow-templates/deploy-prod.yml"
+    ]
+}

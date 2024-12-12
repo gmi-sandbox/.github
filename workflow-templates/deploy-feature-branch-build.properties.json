@@ -5,5 +5,5 @@
     "categories": [
         "deployment"
     ],
-    "filePatterns": [ "build-and-deploy-nonprod.yml", "deploy-prod.yml" ]
+    "filePatterns": [ "./workflow-templates/deploy-prod.yml" ]
 }

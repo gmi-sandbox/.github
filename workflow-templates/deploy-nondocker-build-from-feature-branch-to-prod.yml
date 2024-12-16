@@ -11,16 +11,15 @@ jobs:
     if: github.event.pull_request.merged == true && github.ref_name == $default-branch
     runs-on: gcp
     steps:
-    - run: |
-        echo The PR was merged
+    - run: echo 'The PR was merged'
 
   get_github_context:
     permissions: read-all
-    uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@feat/implement-reusable-workflow
+    uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@v1
 
   promote_build:
     runs-on: gcp
-    needs: [get_github_context]
+    needs: get_github_context
     steps:
     - uses: actions/checkout@v4
     - name: Setup JFrog CLI for promotion (only for Production)

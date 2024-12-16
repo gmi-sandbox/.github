@@ -27,21 +27,21 @@ jobs:
         - set_env
       runs-on: gcp
       outputs:
-        clusterMatrix: ${{steps.deploy.outputs.clusterMatrix}}
+        clusterMatrix: ${{ steps.deploy.outputs.clusterMatrix }}
       steps:
         - uses: actions/checkout@v4
         - name: deploy
           id: deploy
           uses: gmi-actions/deployK8sApplication@v1
           with:
-            kubeconfig: ${{secrets.K8S_DEPLOY_KUBECONFIG}}
+            kubeconfig: ${{ secrets.K8S_DEPLOY_KUBECONFIG }}
             app_env: dev # Kube Namespace ENV Optional, More than likely this will match your Deploy Environment.
             cluster_env: dev
             # These are your HELM values file overrides. The below contains defaults most projects will use.
             values: | 
               image: 
-                repository: ${{needs.build_container.outputs.container_registry}}/${{needs.build_container.outputs.container_name}}
-                tag: ${{needs.build_container.outputs.container_tag}}
+                repository: ${{ needs.build_container.outputs.container_registry }}/${{ needs.build_container.outputs.container_name }}
+                tag: ${{ needs.build_container.outputs.container_tag }}
               istio:
                 # Don't forget to setup your environment with Variables. This example uses a github Environment specific Variable.
                 hosts:

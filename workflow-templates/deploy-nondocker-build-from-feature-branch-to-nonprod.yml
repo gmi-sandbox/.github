@@ -5,7 +5,7 @@ on:
 jobs:
   get_github_context:
     permissions: read-all
-    uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@feat/implement-reusable-workflow
+    uses: gmi-actions/feature-branch-promotion-setup-env/.github/workflows/get-github-context.yaml@v1
 
   build_and_push_artifacts:
     needs: get_github_context
@@ -23,7 +23,7 @@ jobs:
 
       # Push the artifact to artifactory, this is a placeholder and should be replaced with the actual build steps
       - name: Push Artifact
-        uses: gmi-actions/push-artifact@feat/POC-Individualize-promote-artifact
+        uses: gmi-actions/push-artifact@v1
         with:
           source_path: # Add the path to the artifact you want to push
           repository_name: # Add the name of the repository you want to push to

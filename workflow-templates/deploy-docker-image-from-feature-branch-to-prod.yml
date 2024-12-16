@@ -12,8 +12,7 @@ jobs:
       if: github.event.pull_request.merged == true && github.ref_name == $default-branch
       runs-on: gcp
       steps:
-      - run: |
-          echo The PR was merged
+      - run: echo 'The PR was merged'
 
   # Get the environment variables required for promotion
   set_env:
@@ -56,14 +55,14 @@ jobs:
       - promote_image
     runs-on: gcp
     outputs:
-      clusterMatrix: ${{steps.deploy.outputs.clusterMatrix}}
+      clusterMatrix: ${{ steps.deploy.outputs.clusterMatrix }}
     steps:
       - uses: actions/checkout@v4 # Checkout is required to pull the correct catalog-info-yaml
       - name: deploy
         id: deploy
         uses: gmi-actions/deployK8sApplication@v1 
         with:
-        kubeconfig: ${{secrets.K8S_DEPLOY_KUBECONFIG}}
+        kubeconfig: ${{ secrets.K8S_DEPLOY_KUBECONFIG }}
         cluster_env: prod
         app_env: prod
         # These are your HELM values file overrides. The below contains defaults most projects will use.

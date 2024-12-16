@@ -2,7 +2,7 @@ name: 'deploy-docker-image-from-feature-branch-to-nonprod'
 on:
   pull_request:
 
-## Build a docker image with a unique build in the form of <triggering branch name><commit sha>, and deploy to nonprod k8s
+## Build a docker image with a unique build number in the form of <triggering branch name><commit sha>, and deploy to nonprod k8s
 jobs:
     set_env:
       permissions: read-all

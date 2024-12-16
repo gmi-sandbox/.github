@@ -1,7 +1,6 @@
 {
     "name": "deploy-nondocker-build-from-feature-branch-to-prod",
-    "description": "Get the latest build associated with a feature branch and deploy to prod. Must be used in conjunction with the 'deploy-nondocker-build-from-feature-branch-to-nonprod' workflow if not using workflow_dispatch.",
-    "iconName": "k8s-icon",
+    "description": "Get the latest build associated with a feature branch and deploy to prod. Must be used in conjunction with the 'deploy-nondocker-build-from-feature-branch-to-nonprod'.",
     "categories": [
         "deployment"
     ],
